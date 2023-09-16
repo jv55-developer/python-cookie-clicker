@@ -1,6 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 import time
 
 # Keep Chrome open
@@ -11,19 +10,18 @@ driver = webdriver.Chrome(options=chrome_options)
 # Open site
 driver.get("https://orteil.dashnet.org/experiments/cookie/")
 
-
 cookie = driver.find_element(By.CSS_SELECTOR, value="#cookie")
-store = driver.find_elements(By.CSS_SELECTOR, value="#store div")
-list_of_store_items = store
+list_of_store_items = driver.find_elements(By.CSS_SELECTOR, value="#store div")
 
-click_cookie = True
 start_time = int(time.time())
-while click_cookie:
+timeout = time.time() + 60*5
+while True:
     money = int(driver.find_element(By.ID, value="money").text.replace(",", ""))
     cookie.click()
 
-    if int(time.time()) == start_time + 5:
+    list_of_store_items = driver.find_elements(By.CSS_SELECTOR, value="#store div")
 
+    if int(time.time()) == start_time + 5:
         for store_item in list_of_store_items[:-1]:
             item = store_item.text
             item_value = int(item.split("\n")[0].split("- ")[1].replace(",", ""))
@@ -32,7 +30,5 @@ while click_cookie:
                 item_id = store_item.get_attribute("id")
                 item_to_click = driver.find_element(By.ID, value=item_id)
                 item_to_click.click()
-                list_of_store_items.remove(store_item)
 
         start_time = int(time.time())
-
